@@ -10,7 +10,6 @@ section .text
     global _start
 
 _start:
-    ; Вычисление суммы разностей
     xor ecx, ecx
     xor ebx, ebx
 
@@ -25,16 +24,13 @@ loop:
     jmp loop
 
 average:
-    ; Вычисление среднего
     mov eax, ebx
     cdq
     mov ecx, 7
     idiv ecx
     
-    ; Сохраняем результат
     mov edi, eax
     
-    ; Если отрицательное - выводим минус
     test eax, eax
     jns positive
     
@@ -48,7 +44,6 @@ average:
     neg eax
 
 positive:
-    ; Конвертация в строку
     mov esi, buffer + 11
     mov byte [esi], 10
     dec esi
@@ -63,7 +58,6 @@ digit:
     test eax, eax
     jnz digit
     
-    ; Вывод
     inc esi
     mov edx, buffer + 12
     sub edx, esi
@@ -72,7 +66,6 @@ digit:
     mov eax, 4
     int 0x80
     
-    ; Выход
     mov eax, 1
     xor ebx, ebx
     int 0x80
