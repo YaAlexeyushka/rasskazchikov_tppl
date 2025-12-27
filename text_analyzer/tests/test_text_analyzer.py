@@ -1,4 +1,4 @@
-from text_analyzer.text_analyzer import *
+from text_analyzer import *
 import unittest
 
 
