@@ -13,9 +13,11 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <endian.h>
+#include <atomic>
 
 std::mutex file_mutex;
 std::ofstream data_file;
+std::atomic<bool> keep_running(true);
 
 std::string timestamp_to_string(int64_t timestamp_us) {
     time_t seconds = timestamp_us / 1000000;
@@ -115,14 +117,14 @@ int connect_and_auth(const char* ip, int port, size_t package_size) {
 void worker_server1() {
     uint8_t buffer[15];
     
-    for (;;) {
+    while (keep_running) {  
         int sock = connect_and_auth("95.163.237.76", 5123, 15);
         if (sock < 0) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             continue;
         }
         
-        for (;;) {
+        while (keep_running) {  
             if (!send_data(sock, "get", 3)) break;
             if (!read_full(sock, buffer, 15)) break;
             
@@ -146,14 +148,14 @@ void worker_server1() {
 void worker_server2() {
     uint8_t buffer[21];
     
-    for (;;) {
+    while (keep_running) {  
         int sock = connect_and_auth("95.163.237.76", 5124, 21);
         if (sock < 0) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             continue;
         }
         
-        for (;;) {
+        while (keep_running) { 
             if (!send_data(sock, "get", 3)) break;
             if (!read_full(sock, buffer, 21)) break;
             

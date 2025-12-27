@@ -4,6 +4,9 @@
 #include <string>
 #include <cstdint>
 #include <cstddef>
+#include <atomic>
+
+extern std::atomic<bool> keep_running;  
 
 std::string timestamp_to_string(int64_t timestamp_us);
 uint8_t calculate_checksum(const uint8_t* data, size_t length);
