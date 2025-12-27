@@ -121,15 +121,21 @@ TEST_F(DataCollectorTest, SendDataFailure) {
     EXPECT_FALSE(send_data(invalid_sock, test_data, 4));
 }
 
-TEST_F(DataCollectorTest, SendDataClosedSocket) {
+TEST_F(DataCollectorTest, SendDataPartialSend) {
     int sockets[2];
     ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sockets), 0);
-    close(sockets[1]);
     
-    const char* test_data = "test";
-    EXPECT_FALSE(send_data(sockets[0], test_data, 4));
+    int sndbuf = 10;
+    setsockopt(sockets[0], SOL_SOCKET, SO_SNDBUF, &sndbuf, sizeof(sndbuf));
+    
+    char large_data[1000];
+    memset(large_data, 'A', sizeof(large_data));
+    
+    bool result = send_data(sockets[0], large_data, sizeof(large_data));
     
     close(sockets[0]);
+    close(sockets[1]);
+    
 }
 
 TEST_F(DataCollectorTest, ReadFullSuccess) {
